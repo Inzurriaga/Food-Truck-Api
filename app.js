@@ -1,5 +1,3 @@
-import { request } from "http";
-
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -9,43 +7,50 @@ app.use(express.json());
 app.locals.trucks = [
     {
         id: 123,
-        name: "hamburger Joint",
-        cuisine: [],
+        name: "Chibby Wibbitz Sliderz n Bitez",
+        type: ["Burgers", "Sandwiches", "Tacos"],
+        descrip: "Providing fresh, made to order small bitez that are both healthy and satisfyingly delicious!",
+        site: "http://chibbywibbitz.com/",
         position: [39.75050,-104.99878]
     },
     {
         id: 234,
-        name: "picante grille",
-        cuisine: [],
-        rating: [],
-        position: [39.75085,-104.99870]
+        name: "The Spicy Kitchen",
+        type: ["Mexican", "American"],
+        descrip: "From tacos and tortas to burgers and dogs. We offer affordable catering to feed all needs. Authentic Mexican Cuisine and a twist on American classics. Family heirloom recipes. Here at TSK we strive to give our customers the best service and quality of products. Skillful preperation, fresh, made from scratch ingredients. Gourmet style. Our bakers make decadent desserts and cakes. Book online or by phone. Serving the local community and public events. Vegan/Vegetarian options available.",
+        site: "https://www.tskfoodtruck.com/",
+        position: [39.75085,-104.99070]
     },
     {
         id: 345,
-        name: "taco tacos", 
-        cuisine: [],
-        rating: [],
+        name: "Kona Ice of South Central Denver",
+        type: ["shave icecream", "icecream"],
+        descrip: "We're the coolest shaved ice truck around! Plus, we're mobile. That means we bring the party to you! Corporate events, birthday parties, school fundraising",
+        site: "https://www.kona-ice.com/local-site/kona-ice-of-south-central-denver/",
         position: [39.75082,-104.99879]
     },
     {
         id: 456,
-        name: "dog house",
-        cuisine: [],
-        rating: [],
-        position: [39.75086,-104.99871]
+        name: "Church of Cupcakes",
+        type: ["cupcakes"],
+        descrip: "Like churchgoers to church, cupcakes are something we have faith in. From the bottom of our toes to the tips of our frosting-tipped noses, they make our soul happy. So we started it ourselves: A faith-based community to celebrate The Cupcake. Welcome!",
+        site: "http://www.churchofcupcakes.com",
+        position: [39.76086,-104.99971]
     },
     {
         id: 567,
-        name: "this is a food truck",
-        cuisine: [],
-        rating: [],
+        name: "Hamburghini",
+        type: ["Burgers", "Comfort Food", "Mac 'n Cheese"],
+        descrip: "A pimped out truck that has an inspired hockey themed menu, but specializes in gourmet burgers, Mac N ' Cheese bowls, and many more delicious creations...so whether it is our signature Hab Burger...Peter Forsberg, or Patrick Roy....you will not be disappointed with anything you choose.",
+        site: "http://www.hamburghini.net",
         position: [39.75685,-104.99670]
     },
     {
         id: 789,
-        name: "the gabriel joint",
-        cuisine: [],
-        rating: [],
+        name: "Roll It Up Sushi Truck",
+        type: ["Seafood", "Asian Fusion"],
+        descrip: "Denver's original street sushi. A leap from traditional sushi with a new spin, giving you the best of both worlds.",
+        site: "https://www.rollitupsushitruck.com/",
         position: [39.76085,-104.90870]
     }
 ];
@@ -75,10 +80,16 @@ const grabTruck = (userDistance, userLatit, userLong) => {
     return truck
 }
 
+app.get("/api/:id", (request, response) => {
+    const truck = app.locals.trucks.find(truck => request.params.id == truck.id)
+    response.status(200).json(truck)
+})
+
 app.post("/api/truck", (request, response) => {
     const { distance, long, latit } = request.body
     const trucklist = grabTruck(distance, latit, long)
     response.status(200).json(trucklist)
 })
+
 
 export default app;
