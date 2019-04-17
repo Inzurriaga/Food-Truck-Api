@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+global.fetch = require("node-fetch");
 app.use(cors());
 app.use(express.json());
 
@@ -74,10 +75,26 @@ const  deg2rad = (deg) => {
   }
 
 const grabTruck = (userDistance, userLatit, userLong) => {
-    const truck = app.locals.trucks.filter(truck => {
+    const trucks = app.locals.trucks.filter(truck => {
         return distanceCalutation(userLatit, userLong, truck.position[0], truck.position[1]) <= userDistance
     })
-    return truck
+    const trucksWithDistance = trucks.map(truck => {
+        const distance = distanceCalutation(userLatit, userLong, truck.position[0], truck.position[1])
+        return {...truck, distance}
+    })
+    const SortedTrucksWithDistance = trucksWithDistance.sort((a, b) => {
+        return a.distance - b.distance
+    })
+    return SortedTrucksWithDistance
+}
+
+const fetchAddressCoordinates = async (address) => {
+    const addressURl = address.split(" ").join("+")
+    const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${addressURl}&key=AIzaSyCM3dcUZQVSfuCV4R2ijORw_xPIieQvX_Y`, {
+        method: "POST"
+    })
+    const data = await response.json()
+    return data
 }
 
 app.get("/api/:id", (request, response) => {
@@ -89,6 +106,16 @@ app.post("/api/truck", (request, response) => {
     const { distance, long, latit } = request.body
     const trucklist = grabTruck(distance, latit, long)
     response.status(200).json(trucklist)
+})
+
+
+app.post("/api/truck/update", async (request, response) => {
+    const { distance, address } = request.body
+    const fetchAddress = await fetchAddressCoordinates(address)
+    const {lat, lng} = fetchAddress.results[0].geometry.location
+    const trucklist = grabTruck(parseInt(distance), lat, lng)
+    const truckData = {trucklist, position: [lat, lng]}
+    response.status(200).json(truckData)
 })
 
 
