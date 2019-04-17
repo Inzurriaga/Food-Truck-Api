@@ -57,8 +57,8 @@ app.locals.trucks = [
 ];
 
 const distanceCalutation = (userLatit, userLong, truckLatit, truckLong) =>  {
-    var R = 6371; // Radius of the earth in km
-    var dLat = deg2rad(truckLatit-userLatit);  // deg2rad below
+    var R = 6371;
+    var dLat = deg2rad(truckLatit-userLatit); 
     var dLon = deg2rad(truckLong-userLong); 
     var a = 
       Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -66,7 +66,7 @@ const distanceCalutation = (userLatit, userLong, truckLatit, truckLong) =>  {
       Math.sin(dLon/2) * Math.sin(dLon/2)
       ; 
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    var d = (R * c) * 0.6214; // Distance in miles
+    var d = (R * c) * 0.6214; 
     return d;
   }
   
